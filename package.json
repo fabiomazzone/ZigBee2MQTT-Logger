@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "test": "test",
+    "prestart": "npm run build",
+    "start" : "node build/index.js",
     "build": "tsc -b"
   },
   "author": "Fabio Mazzone",
