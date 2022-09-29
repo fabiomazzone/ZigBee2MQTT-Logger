@@ -1,0 +1,20 @@
+{
+  "name": "temperatur-logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "nodemon src/index.ts",
+    "test": "test"
+  },
+  "author": "Fabio Mazzone",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "mqtt": "^4.3.7"
+  }
+}
