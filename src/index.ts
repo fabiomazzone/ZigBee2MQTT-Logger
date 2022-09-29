@@ -1,6 +1,6 @@
 import * as mqtt from 'mqtt';
-import mariadb from 'mariadb';
-import dotenv from 'dotenv-flow';
+import * as mariadb from 'mariadb';
+import * as dotenv from 'dotenv-flow';
 
 dotenv.config();
 
@@ -148,4 +148,5 @@ async function insertData(data: Record<string, string | number>) {
 process.on('SIGINT', () => {
   console.log('bye bye');
   client.end();
+  pool.end();
 });

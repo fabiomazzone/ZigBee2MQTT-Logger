@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "test"
+    "test": "test",
+    "build": "tsc -b"
   },
   "author": "Fabio Mazzone",
   "license": "UNLICENSED",
