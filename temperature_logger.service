@@ -4,8 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=fabiomazzone
-ExecStart=/usr/bin/node /home/ubuntu/temperature-logger.js
+User=temperature_logger
+WorkingDirectory=/opt/temperature_logger
+ExecStart=npm start
 Restart=on-failure
 
 [Install]
