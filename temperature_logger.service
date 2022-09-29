@@ -1,0 +1,12 @@
+[Unit]
+Description=hello_env.js - making your environment variables rad
+After=network.target
+
+[Service]
+Type=simple
+User=fabiomazzone
+ExecStart=/usr/bin/node /home/ubuntu/temperature-logger.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
