@@ -142,6 +142,7 @@ async function insertData(data: Record<string, string | number>) {
   const conn = await pool.getConnection();
   const res = await conn.query('INSERT INTO data VALUES (?, ?, ?, ?, ?)', [...DB_TABLE_ORDER].map((key) => data[key]));
   console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+  conn.end();
 }
 
 
