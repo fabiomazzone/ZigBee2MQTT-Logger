@@ -1,5 +1,5 @@
 [Unit]
-Description=hello_env.js - making your environment variables rad
+Description=temperature_logger
 After=network.target
 
 [Service]
