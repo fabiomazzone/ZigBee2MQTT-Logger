@@ -1,18 +1,20 @@
 import * as mqtt from 'mqtt';
 import mariadb from 'mariadb';
+import dotenv from 'dotenv-flow';
 
+dotenv.config();
 
-const DB_HOST = 'homebridge.fritz.box';
-const DB_USER = 'temperature_logger';
-const DB_PASS = 'temperature_logger';
-const DB_NAME = 'temperature_logger';
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const DB_PASS = process.env.DB_PASS;
+const DB_NAME = process.env.DB_NAME;
 
-const DB_TABLE_ORDER = ['id', 'deviceName', 'timestamp', 'temperature', 'humidity',];
+const DB_TABLE_ORDER = process.env.DB_TABLE_ORDER?.split(',') || [];
 
-const MQTT_SERVER = 'homebridge.fritz.box';
-const MQTT_PORT = 1883
-const MQTT_TOPIC = 'zigbee2mqtt';
-const MQTT_DEVICES_TOPIC = `${MQTT_TOPIC}/bridge/devices`;
+const MQTT_SERVER = process.env.MQTT_SERVER;
+const MQTT_PORT = process.env.MQTT_PORT;
+const MQTT_TOPIC = process.env.MQTT_TOPIC;
+const MQTT_DEVICES_TOPIC = `${MQTT_TOPIC}/${process.env.MQTT_DEVICES_TOPIC}`;
 
 const pool = mariadb.createPool({
     host: DB_HOST,
@@ -41,11 +43,11 @@ interface MQTT_Device {
 
 client.on('connect', () => {
   console.log('connected');
-  // client.subscribe(`${MQTT_DEVICES_TOPIC}`, (err) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  // });
+  client.subscribe(`${MQTT_DEVICES_TOPIC}`, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 });
 
 client.on('message', (topic, message) => {

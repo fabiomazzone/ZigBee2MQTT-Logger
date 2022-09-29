@@ -10,11 +10,13 @@
   "author": "Fabio Mazzone",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@types/dotenv-flow": "^3.2.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "dotenv-flow": "^3.2.0",
     "mariadb": "^3.0.1",
     "mqtt": "^4.3.7"
   }
