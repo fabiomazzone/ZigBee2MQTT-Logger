@@ -1,5 +1,5 @@
 import * as mqtt from 'mqtt';
-import * as mariadb from 'mariadb';
+import * as mysql from 'mysql2/promise';
 import * as dotenv from 'dotenv-flow';
 
 dotenv.config();
@@ -16,11 +16,13 @@ const MQTT_PORT = process.env.MQTT_PORT;
 const MQTT_TOPIC = process.env.MQTT_TOPIC;
 const MQTT_DEVICES_TOPIC = `${MQTT_TOPIC}/${process.env.MQTT_DEVICES_TOPIC}`;
 
-const pool = mariadb.createPool({
+const pool = mysql.createPool({
     host: DB_HOST,
     user: DB_USER,
     password: DB_PASS,
     database: DB_NAME,
+    connectionLimit: 3,
+    trace: true,
 });
 
 const client: mqtt.MqttClient = mqtt.connect(`mqtt://${MQTT_SERVER}:${MQTT_PORT}`);
@@ -127,7 +129,7 @@ client.on('data', async (topic: string, message: Buffer) => {
       temperature: Number.parseFloat(temperature) * 100,
       humidity: Number.parseFloat(humidity) * 100,
       deviceName,
-      timestamp: new Date().getTime(),
+      timestamp: new Date().getTime() + 1,
     };
     try {
       insertData(data);
@@ -138,11 +140,12 @@ client.on('data', async (topic: string, message: Buffer) => {
   }
 });
 
+
 async function insertData(data: Record<string, string | number>) {
   const conn = await pool.getConnection();
-  const res = await conn.query('INSERT INTO data VALUES (?, ?, ?, ?, ?)', [...DB_TABLE_ORDER].map((key) => data[key]));
-  console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
-  conn.release();
+  const [results, fields] = await conn.query('INSERT INTO data VALUES (?, ?, ?, ?, ?)', [...DB_TABLE_ORDER].map((key) => data[key]));
+  await conn.release();
+  console.log(JSON.stringify(results)); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
 }
 
 
