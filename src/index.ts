@@ -131,7 +131,7 @@ client.on('data', async (topic: string, message: Buffer) => {
       timestamp: new Date().getTime(),
     };
     try {
-      insertData(data);
+      await insertData(data);
       console.log(data)
     } catch (err) {
       console.error(err);
