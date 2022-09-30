@@ -21,7 +21,7 @@ const pool = mysql.createPool({
     user: DB_USER,
     password: DB_PASS,
     database: DB_NAME,
-    connectionLimit: 3,
+    connectionLimit: process.env.DB_CONNECTION_LIMIT ? parseInt(process.env.DB_CONNECTION_LIMIT) : 10,
     trace: true,
 });
 
@@ -118,7 +118,6 @@ client.on('data', async (topic: string, message: Buffer) => {
   const devicePairs = Object.entries(devices);
 
   if(devicePairs.find(([_, name]) => name === deviceName) && message.length > 0) {
-    const conn = await pool.getConnection();
     const payload = JSON.parse(message.toString());
     const {temperature, humidity} = payload;
 
@@ -129,7 +128,7 @@ client.on('data', async (topic: string, message: Buffer) => {
       temperature: Number.parseFloat(temperature) * 100,
       humidity: Number.parseFloat(humidity) * 100,
       deviceName,
-      timestamp: new Date().getTime() + 1,
+      timestamp: new Date().getTime(),
     };
     try {
       insertData(data);
@@ -143,13 +142,31 @@ client.on('data', async (topic: string, message: Buffer) => {
 
 async function insertData(data: Record<string, string | number>) {
   const conn = await pool.getConnection();
+  console.log('got connection');
   const [results, fields] = await conn.query('INSERT INTO data VALUES (?, ?, ?, ?, ?)', [...DB_TABLE_ORDER].map((key) => data[key]));
-  await conn.release();
-  console.log(JSON.stringify(results)); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+  console.log('insert values')
+  conn.release();
+  console.log(`update status: ${JSON.stringify(results)}`);
 }
 
 
+process.on('SIGTERM', () => {
+  console.log('bye bye');
+  client.end();
+  pool.end();
+});
+
 process.on('SIGINT', () => {
+  console.log('bye bye');
+  client.end();
+  pool.end();
+});
+process.on('SIGUSR2', () => {
+  console.log('bye bye');
+  client.end();
+  pool.end();
+});
+process.on('exit', () => {
   console.log('bye bye');
   client.end();
   pool.end();
